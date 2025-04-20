@@ -1,0 +1,269 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #4d004d;
+    padding: 20px;
+    color: #ffffff;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+    background-color: #cc00cc;
+    padding: 20px;
+    border-radius: 50px;
+}
+
+table {
+    width: 60%;
+    margin: 20px auto;
+    max-width: 300px;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+table td {
+    vertical-align: middle;
+    padding: 10px;
+    border: 2px solid #4d004d;
+    background-color: #cc00cc;
+    transition: background-color 1s ease;
+    overflow: hidden;
+    font-size: 12px;
+}
+
+table td:hover {
+    background-color: #ff4dff;
+}
+
+table th {
+    background-color: #4d004d;
+    color: white;
+    padding: 10px;
+}
+
+table tr:nth-child(even) {
+    background-color: #f0f0f0;
+}
+
+td img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+h1 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    width: 100%;
+}
+
+nav ul li,
+nav ul input,
+nav ul select,
+nav ul button {
+    font-size: 18px;
+    padding: 10px;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 5px;
+}
+
+nav ul input,
+nav ul select,
+nav ul button {
+    margin: 5px 0;
+}
+
+nav ul li:hover,
+nav ul input:hover,
+nav ul select:hover {
+    background-color: #ff4dff;
+}
+
+button {
+    margin-top: 20px;
+}
+
+.tooltip {
+    position: absolute;
+    background-color: white;
+    color: black;
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    font-size: 16px;
+    line-height: 1.4;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    max-width: 400px;
+}
+
+.tooltip img {
+    max-width: 200%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Play és Draw gomb stílusa */
+button {
+    font-size: 18px;
+    padding: 10px;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 5px;
+    background-color: #cc00cc;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #ff4dff;
+}
+
+/* DRAW gomb */
+#draw {
+    font-size: 18px;
+    padding: 10px;
+    width: 100%;
+    max-width: 300px;
+    border-radius: 5px;
+    background-color: white;
+    color: black;
+    border: none;
+    cursor: pointer;
+}
+
+/* A táblázat és a gomb elhelyezése */
+.game-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start; /* Balra igazítjuk */
+    gap: 20px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+/* Táblázat konténer */
+table {
+    flex-grow: 1;  /* Táblázat a rendelkezésre álló helyet kitölti */
+}
+
+.selected-cell {
+    outline: 2px solid yellow;
+}
+
+.game-ui {
+    background-color: #ffffff22;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 15px;
+    margin-bottom: 20px;
+    font-size: 18px;
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    background: #fff;
+    color: #000;
+    padding: 30px 40px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h2 {
+    margin-bottom: 10px;
+}
+
+.modal-content button {
+    margin-top: 20px;
+    font-size: 16px;
+    padding: 10px 20px;
+    background: #cc00cc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+#final-message ol {
+    text-align: left;
+    padding-left: 20px;
+}
+
+#final-message li {
+    margin-bottom: 5px;
+}
+
+/* Mobilnézet */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    nav ul {
+        gap: 10px;
+    }
+
+    nav ul li,
+    nav ul input,
+    nav ul select {
+        font-size: 16px;
+        padding: 8px;
+    }
+
+    table {
+        width: 80%;
+        max-width: 100%;
+    }
+
+    table td {
+        padding: 10px;
+        font-size: 14px;
+    }
+}
