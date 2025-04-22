@@ -1,4 +1,4 @@
-// --- JÁTÉK INDÍTÁS ---
+// JÁTÉK INDÍTÁS
 const play = document.querySelector("#play");
 play.addEventListener("click", function () {
     const selectedDifficulty = document.querySelector("#difficulty").value;
@@ -9,7 +9,7 @@ let totalScore = 0;
 let remainingTime = 0;
 let timerInterval = null;
 
-// --- TÁBLÁZAT GENERÁLÁS ---
+// TÁBLÁZAT GENERÁLÁS
 function generateTable(difficulty) {
     // Főmenü törlése
     document.querySelector("#menu").style.display = "none";
@@ -17,6 +17,9 @@ function generateTable(difficulty) {
 
     const playerName = document.querySelector("input[type='text']").value || "Névtelen";
     const level = levels[difficulty];
+
+    localStorage.setItem("lastPlayerName", playerName);
+    localStorage.setItem("lastDifficulty", difficulty);
 
     document.querySelector("#player-name-display").innerText = playerName;
     document.querySelector("#difficulty-display").innerText = levels[difficulty].name;
@@ -34,7 +37,7 @@ function generateTable(difficulty) {
     
         if (remainingTime <= 0) {
             clearInterval(timerInterval);
-            endGame(); // a következő feladatban készítjük el
+            endGame("timeout");
         }
     },1000)
 
@@ -85,7 +88,8 @@ function generateTable(difficulty) {
 
     adjustCellSize(level.rows, level.cols);
 
-    // --- DRAW GOMB DINAMIKUS LÉTREHOZÁSA ---
+    // DRAW GOMB DINAMIKUS LÉTREHOZÁSA
+
     const drawButton = document.createElement("button");
     drawButton.id = "draw";
     drawButton.innerText = "Draw";
@@ -96,7 +100,8 @@ function generateTable(difficulty) {
     });
 }
 
-// --- CELLA MÉRETEZÉS ---
+// CELLA MÉRETEZÉS
+
 function adjustCellSize(rows, cols) {
     const table = document.querySelector("table");
 
@@ -116,7 +121,8 @@ function adjustCellSize(rows, cols) {
     });
 }
 
-// --- TECHNOLÓGIÁK SZŰRÉSE NEHÉZSÉG SZERINT ---
+// TECHNOLÓGIÁK SZŰRÉSE NEHÉZSÉG SZERINT
+
 function getAvailableTechnologies(difficulty) {
     const difficulties = ["easy", "medium", "hard"];
     const currentIndex = difficulties.indexOf(difficulty);
@@ -140,7 +146,8 @@ function getAvailableTechnologies(difficulty) {
     return availableTechs;
 }
 
-// --- TOOLTIP KEZELÉS ---
+// TOOLTIP KEZELÉS
+
 const tooltip = document.querySelector("#tooltip");
 let tooltipTimeout = null;
 let hideTimeout = null;
@@ -186,7 +193,8 @@ document.addEventListener("mouseout", function (e) {
     }
 });
 
-// --- ÚJ TECHNOLÓGIA GENERÁLÁS ---
+// ÚJ TECHNOLÓGIA GENERÁLÁS
+
 function getEmptyCells() {
     const allTds = document.querySelectorAll("td");
     if (!allTds || allTds.length === 0) return [];
@@ -208,6 +216,8 @@ function generateNewTech(cell, difficulty) {
             data-tooltip="${tech.evolutionTooltip}"
         >
     `;
+
+    checkGameOver();
 }
 
 function generateNewTechRandom(difficulty) {
@@ -231,7 +241,8 @@ function generateNewTechRandom(difficulty) {
 }
 
 
-// --- CELLÁRA KATTINTÁS ESEMÉNY ---
+// CELLÁRA KATTINTÁS ESEMÉNY
+
 let firstCell = null;
 let secondCell = null;
 
@@ -263,7 +274,8 @@ function handleCellClick(td, difficulty) {
     }
 }
 
-// --- ÖSSZEOLVASZTÁS ---
+// ÖSSZEOLVASZTÁS
+
 function mergeCells(firstCell, secondCell, difficulty) {
     const newTech = getMergedTechnology(firstCell, secondCell);
 
@@ -276,6 +288,7 @@ function mergeCells(firstCell, secondCell, difficulty) {
         <img
             src="assets/logos/${newTech.img}"
             alt="${newTech.name}"
+            class="tech-img merge-animation"
             class="tech-img"
             data-name="${newTech.name}"
             data-description="${newTech.description}"
@@ -293,9 +306,10 @@ function mergeCells(firstCell, secondCell, difficulty) {
         totalScore += evolution.points;
         document.querySelector("#score").innerText = totalScore;
     }
+
+    checkGameOver()
 }
 
-// --- AZ ÖSSZEOLVASZTOTT TECHNOLÓGIA LÉTREHOZÁSA ---
 function getMergedTechnology(firstCell, secondCell) {
     const img = firstCell.querySelector("img");
     const currentTechName = img.getAttribute("data-name");
@@ -314,53 +328,6 @@ function getMergedTechnology(firstCell, secondCell) {
     }
 
     return null;
-}
-
-// IDŐ
-
-function formatTime(seconds) {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
-}
-
-function endGame() {
-    clearInterval(timerInterval);
-
-    const playerName = document.querySelector("#player-name-display").innerText;
-    const difficulty = document.querySelector("#difficulty-display").innerText.toLowerCase();
-
-    const message = `${playerName}, time is up! Total score: ${totalScore}`;
-
-    document.querySelector("#final-message").innerText = message;
-    
-    const topScores = saveScore(difficulty, playerName, totalScore);
-
-    const list = topScores.map((entry, i) => `<li>${i + 1}. ${entry.name} – ${entry.score}</li>`).join("");
-
-    document.querySelector("#final-message").innerHTML += 
-    `<h3>Top 5 (${difficulty}):</h3>
-    <ol>${list}</ol>`;
-
-    document.querySelector("#game-over").style.display = "flex";
-}
-
-document.querySelector("#restart").addEventListener("click", function () {
-    location.reload();
-});
-
-// RANGLISTA
-
-function saveScore(difficulty, name, score) {
-    const key = `highscores-${difficulty}`;
-    const stored = JSON.parse(localStorage.getItem(key)) || [];
-
-    stored.push({ name, score });
-    stored.sort((a, b) => b.score - a.score);
-    const top5 = stored.slice(0, 5);
-
-    localStorage.setItem(key, JSON.stringify(top5));
-    return top5;
 }
 
 function hasMergeablePair() {
@@ -392,3 +359,77 @@ function hasMergeablePair() {
     }
     return false;
 }
+
+// IDŐ
+
+function formatTime(seconds) {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+}
+
+// GAME OVER
+
+function endGame(reason = "no-moves") {
+    clearInterval(timerInterval);
+
+    const playerName = document.querySelector("#player-name-display").innerText;
+    const difficulty = document.querySelector("#difficulty-display").innerText.toLowerCase();
+
+    let message = "";
+
+    if (reason === "timeout") {
+        message = `${playerName}, time is up! Total score: ${totalScore}`;
+    } else if (reason === "no-moves") {
+        message = `${playerName}, no more moves! Total score: ${totalScore}`;
+    }
+
+    document.querySelector("#final-message").innerText = message;
+    
+    const topScores = saveScore(difficulty, playerName, totalScore);
+    const list = topScores.map((entry, i) => `<li>${i + 1}. ${entry.name} – ${entry.score}</li>`).join("");
+
+    document.querySelector("#final-message").innerHTML += 
+    `<h3>Top 5 (${difficulty}):</h3>
+    <ol>${list}</ol>`;
+
+    document.querySelector("#game-over").style.display = "flex";
+}
+
+document.querySelector("#restart").addEventListener("click", function () {
+    const playerName = localStorage.getItem("lastPlayerName") || "N/A";
+    const difficulty = localStorage.getItem("lastDifficulty") || "easy";
+
+    document.querySelector("#game-over").style.display = "none";
+
+    generateTable(difficulty);
+});
+
+document.querySelector("#back-to-menu").addEventListener("click", function () {
+    location.reload();
+});
+
+function checkGameOver() {
+    const empty = getEmptyCells();
+    if (empty.length === 0 && !hasMergeablePair()) {
+        clearInterval(timerInterval);
+        endGame("no-moves");
+    }
+}
+
+// RANGLISTA
+
+function saveScore(difficulty, name, score) {
+    const key = `highscores-${difficulty}`;
+    const stored = JSON.parse(localStorage.getItem(key)) || [];
+
+    stored.push({ name, score });
+    stored.sort((a, b) => b.score - a.score);
+    const top5 = stored.slice(0, 5);
+
+    localStorage.setItem(key, JSON.stringify(top5));
+    return top5;
+}
+
+//
+
