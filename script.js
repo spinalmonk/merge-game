@@ -11,7 +11,9 @@ let timerInterval = null;
 
 // TÁBLÁZAT GENERÁLÁS
 function generateTable(difficulty) {
-    // Főmenü törlése
+    const existingDraw = document.querySelector("#draw");
+    if (existingDraw) existingDraw.remove();
+
     document.querySelector("#menu").style.display = "none";
     document.querySelector("h1").innerText = "";
 
@@ -44,17 +46,14 @@ function generateTable(difficulty) {
     const table = document.querySelector("table");
     const availableTechs = getAvailableTechnologies(difficulty);
 
-    // Üres mátrix létrehozása
     const matrix = Array.from({ length: level.rows }, () =>
         Array.from({ length: level.cols }, () => "")
     );
 
-    // Táblázat HTML felépítése stringből
     table.innerHTML = matrix.map(row =>
         `<tr>${row.map(() => `<td></td>`).join("")}</tr>`
     ).join("");
 
-    // Cellák lekérése és eseményfigyelő hozzáadása
     const allCells = Array.from(table.querySelectorAll("td"));
     allCells.forEach(td => {
         td.addEventListener("click", () => {
@@ -62,7 +61,6 @@ function generateTable(difficulty) {
         });
     });
 
-    // Kezdeti technológiák elhelyezése véletlenszerű cellákba
     const startCount = {
         "easy": 4,
         "medium": 6,
@@ -233,7 +231,6 @@ function generateNewTechRandom(difficulty) {
     const randomEmptyCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
     generateNewTech(randomEmptyCell, difficulty);
 
-    // Ellenőrzés generálás után is!
     if (getEmptyCells().length === 0 && !hasMergeablePair()) {
         clearInterval(timerInterval);
         endGame();
@@ -280,7 +277,6 @@ function mergeCells(firstCell, secondCell, difficulty) {
     const newTech = getMergedTechnology(firstCell, secondCell);
 
     if (!newTech) {
-        // Ha nem lehet tovább fejlődni, ne csináljunk semmit
         return;
     }
 
@@ -430,6 +426,3 @@ function saveScore(difficulty, name, score) {
     localStorage.setItem(key, JSON.stringify(top5));
     return top5;
 }
-
-//
-
