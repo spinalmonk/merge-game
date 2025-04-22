@@ -3,7 +3,7 @@ const levels =
     "easy": {
         "name": "Easy",
         "points": 5,
-        "time": 0.05,
+        "time": 10,
         "cols": 4,
         "rows": 4
 
